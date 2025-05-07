@@ -1,0 +1,37 @@
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .booking-summary {
+        position: static !important;
+        margin-top: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .theater-layout .seat-btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.8rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    h1, h2, h3 {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+    
+    .btn {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.9rem;
+    }
+    
+    .table-responsive {
+        overflow-x: auto;
+    }
+}
