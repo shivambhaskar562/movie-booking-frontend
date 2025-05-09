@@ -38,12 +38,12 @@ async function handleLogin(e) {
 
         const data = await response.json();
         
-        // Store username and roles as token
+        // Store id and username and roles as token
         const userToken = {
             data:data
         };
         
-        localStorage.setItem('token', JSON.stringify(userToken));
+        localStorage.setItem('user', JSON.stringify(userToken));
         
         // Redirect based on role
         if (data.roles.includes('ADMIN')) {

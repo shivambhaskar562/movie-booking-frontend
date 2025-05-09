@@ -1,7 +1,14 @@
 // Global variables
 const API_BASE_URL = 'http://localhost:8080/api';
+let currentUser = null;
+
+
 
 document.addEventListener('DOMContentLoaded', function () {
+
+    // Check authentication status first
+    checkAuthStatus();
+
     // Load all movies on movies/all.html
     if (document.getElementById('moviesList')) {
         fetchAllMovies();
@@ -23,6 +30,90 @@ document.addEventListener('DOMContentLoaded', function () {
         setupFilterDropdown();
     }
 });
+
+function checkAuthStatus() {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const loginRegisterContainer = document.querySelector(".loginRegister");
+    
+    if (!user) {
+        // User is not logged in - show login/register buttons
+        loginRegisterContainer.innerHTML = `
+            <div class="d-flex">
+                <a href="../auth/login.html" class="btn btn-outline-light me-2">Login</a>
+                <a href="../auth/register.html" class="btn btn-primary">Register</a>
+            </div>
+        `;
+    } else {
+        // User is logged in - show user dropdown with logout option
+        currentUser = user;
+        loginRegisterContainer.innerHTML = `
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown">
+                    ${user.username || user.data?.username}
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="../bookings/history.html">My Bookings</a></li>
+                    ${(user.roles || user.data?.roles)?.includes('ADMIN') ? 
+                      '<li><a class="dropdown-item" href="../admin/movies/manage.html">Admin Panel</a></li>' : ''}
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#" id="logoutBtn">Logout</a></li>
+                </ul>
+            </div>
+        `;
+        
+        // Add logout event listener
+        document.getElementById('logoutBtn').addEventListener('click', logout);
+    }
+}
+
+// Logout function
+function logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    window.location.href = '../index.html';
+}
+
+// Check authentication status and update UI
+function checkAuthStatus() {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const loginRegisterContainer = document.querySelector(".loginRegister");
+    
+    if (!user) {
+        // User is not logged in - show login/register buttons
+        loginRegisterContainer.innerHTML = `
+            <div class="d-flex">
+                <a href="./auth/login.html" class="btn btn-outline-light me-2">Login</a>
+                <a href="./auth/register.html" class="btn btn-primary">Register</a>
+            </div>
+        `;
+    } else {
+        // User is logged in - show user dropdown with logout option
+        currentUser = user;
+        loginRegisterContainer.innerHTML = `
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown">
+                    ${user?.data?.username}
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="./bookings/history.html">My Bookings</a></li>
+                    ${user?.data?.roles && user?.data?.roles.includes('ADMIN') ? 
+                      '<li><a class="dropdown-item" href="./admin/movies/manage.html">Admin Panel</a></li>' : ''}
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#" id="logoutBtn">Logout</a></li>
+                </ul>
+            </div>
+        `;
+        
+        // Add logout event listener
+        document.getElementById('logoutBtn').addEventListener('click', logout);
+    }
+}
+
+// Logout function
+function logout() {
+    localStorage.removeItem('user');
+    window.location.href = 'index.html';
+}
 
 async function fetchAllMovies() {
     try {
@@ -151,7 +242,7 @@ async function applyFilter(filterType) {
             moviesContainer.innerHTML += `
                 <div class="col-md-4 mb-4">
                     <div class="card h-100">
-                        <img src="../../assets/images/movies/${movie.id}.jpg" class="card-img-top" alt="${movie.title}">
+                                                        <img src="../assets/images/movie_banner.png"
                         <div class="card-body">
                             <h5 class="card-title">${movie.title}</h5>
                             <p class="card-text text-muted">${movie.genre} • ${movie.language}</p>
